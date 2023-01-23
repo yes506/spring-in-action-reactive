@@ -3,13 +3,11 @@ package com.donghyeon.myspringreactor;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Stream;
+import java.util.Map;
 
 @SpringBootTest
 class MySpringReactorApplicationTests {
@@ -214,12 +212,123 @@ class MySpringReactorApplicationTests {
 //                .verifyComplete();
 //    }
 
+//    @Test
+//    public void distinct() {
+//        Flux<String> animalFlux = Flux.just("dog", "cat", "bird", "dog", "bird", "anteater")
+//                .distinct();
+//        StepVerifier.create(animalFlux)
+//                .expectNext("dog", "cat", "bird", "anteater")
+//                .verifyComplete();
+//    }
+
+//    @Test
+//    public void map() {
+//        Flux<Player> playerFlux = Flux
+//                .just("Michael Jordan", "Scottie Pippen", "Steve Kerr")
+//                .map(n -> {
+//                    String[] split = n.split("\\s");
+//                    return new Player(split[0], split[1]);
+//                });
+//        playerFlux.subscribe(player -> System.out.println(player.firstName + " " + player.lastName));
+//    }
+
+//    @Test
+//    public void flatMap() {
+//        Flux<Player> playerFlux = Flux
+//                .just("Michael Jordan", "Scottie Pippen", "Steve Kerr")
+//                .flatMap(player -> Mono.just(player)
+//                        .map(mappedPlayer -> {
+//                            String[] split = mappedPlayer.split("\\s");
+//                            return new Player(split[0], split[1]);
+//                        }))
+//                .subscribeOn(Schedulers.parallel());
+//
+//        List<Player> playerList  = new ArrayList<>();
+//        playerList.add(new Player("Michael", "Jordan"));
+//        playerList.add(new Player("Scottie", "Pippen"));
+//        playerList.add(new Player("Steve", "Kerr"));
+//
+//        playerFlux.subscribe(player -> System.out.printf("%s %s\n", player.firstName, player.lastName));
+//    }
+//
+//    class Player {
+//        private String firstName;
+//        private String lastName;
+//
+//        Player(String firstName, String lastName) {
+//            this.firstName = firstName;
+//            this.lastName = lastName;
+//        }
+//    }
+
+//    @Test
+//    public void buffer() {
+//        Flux<String> fruitFlux = Flux.fromStream(Stream.of("apple", "orange", "banana", "kiwi", "strawberry"));
+//        Flux<List<String>> bufferedFlux = fruitFlux.buffer(3);
+//        StepVerifier.create(bufferedFlux)
+//                .expectNext(Arrays.asList("apple", "orange", "banana"))
+//                .expectNext(Arrays.asList("kiwi", "strawberry"))
+//                .verifyComplete();
+//    }
+
+//    @Test
+//    public void buffer() {
+//        Flux<String> fruitFlux = Flux.just("apple", "orange", "banana", "kiwi", "strawberry")
+//                .buffer(3)
+//                .flatMap(bufferedList -> Flux.fromIterable(bufferedList)
+//                        .map(fruit -> fruit.toUpperCase())
+//                        .subscribeOn(Schedulers.parallel()).log());
+//        fruitFlux.subscribe();
+//    }
+
+//    @Test
+//    public void collectList() {
+//        Flux<String> fruitFlux = Flux.fromArray(new String[]{"apple", "orange", "banana", "kiwi", "strawberry"});
+//        Mono<List<String>> fruitListMono = fruitFlux.collectList();
+//        StepVerifier.create(fruitListMono)
+//                .expectNext(Arrays.asList("apple", "orange", "banana", "kiwi", "strawberry"))
+//                .verifyComplete();
+//    }
+
+//    @Test
+//    public void collectMap() {
+//        Flux<String> animalFlux = Flux
+//                .just("aardvark", "elephant", "koala", "eagle", "kangaroo");
+//        Mono<Map<Character, String >> animalMapMono = animalFlux.collectMap(a -> a.charAt(0));
+//        StepVerifier.create(animalMapMono)
+//                .expectNextMatches(map -> {
+//                    return map.size() == 3 &&
+//                            map.get('a').equals("aardvark") &&
+//                            map.get('e').equals("eagle") &&
+//                            map.get('k').equals("kangaroo");
+//                })
+//                .verifyComplete();
+//    }
+
+//    @Test
+//    public void all() {
+//        Flux<String> animalFlux = Flux.just("aardvark", "elephant", "koala", "eagle", "kangaroo");
+//        Mono<Boolean> hasAMono = animalFlux.all(a -> a.contains("a"));
+//        Mono<Boolean> hasKMono = animalFlux.all(a -> a.contains("k"));
+//        StepVerifier.create(hasAMono)
+//                .expectNext(true)
+//                .verifyComplete();
+//        StepVerifier.create(hasKMono)
+//                .expectNext(false)
+//                .verifyComplete();
+//    }
+
     @Test
-    public void distinct() {
-        Flux<String> animalFlux = Flux.just("dog", "cat", "bird", "dog", "bird", "anteater")
-                .distinct();
-        StepVerifier.create(animalFlux)
-                .expectNext("dog", "cat", "bird", "anteater")
+    public void any() {
+        Flux<String> animalFlux = Flux.fromIterable(Arrays.asList("aardvark", "elephant", "koala", "eagle", "kangaroo"));
+        Mono<Boolean> hasTMono = animalFlux.any(a -> a.contains("t"));
+        StepVerifier.create(hasTMono)
+                .expectNext(true)
+                .verifyComplete();
+
+        Mono<Boolean> hasZMono = animalFlux.any(a -> a.contains("z"));
+        StepVerifier.create(hasZMono)
+                .expectNext(false)
                 .verifyComplete();
     }
 
